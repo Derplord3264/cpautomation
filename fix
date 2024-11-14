@@ -1,0 +1,31 @@
+@echo off
+:: This script attempts to fix issues caused by the previous hardening script without disabling anything else.
+
+:: Elevate the script if not run as administrator
+net session >nul 2>&1
+if %errorLevel% neq 0 (
+    echo This script must be run as administrator. Please run again with elevated privileges.
+    exit /b
+)
+
+:: Enable Windows Update services
+sc config "wuauserv" start= auto
+sc config "BITS" start= auto
+powershell -Command "Set-Service -Name wuauserv -StartupType Automatic"
+powershell -Command "Set-Service -Name bits -StartupType Automatic"
+
+:: Enable Windows Media Player and PowerShell features
+dism /Online /Enable-Feature /FeatureName:WindowsMediaPlayer
+dism /Online /Enable-Feature /FeatureName:WindowsPowerShell
+
+:: Remove Deny Interactive Logon Right for Administrators
+secedit /remove /category "User Rights Assignment" /user "Administrators" /add "SeDenyInteractiveLogonRight"
+
+:: Re-enable Windows Script Host
+reg add "HKCU\Software\Microsoft\Windows Script Host\Settings" /v "Enabled" /t REG_DWORD /d 1 /f
+
+:: Enable Remote Assistance connections
+reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\RemoteAccess" /v "fAllowToGetHelp" /t REG_DWORD /d 1 /f
+
+echo Fixing of Windows 10 settings is complete!
+pause
