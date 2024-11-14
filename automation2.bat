@@ -50,9 +50,6 @@ reg add "HKLM\SOFTWARE\Policies\Microsoft\WindowsStore" /v "RemoveWindowsStore" 
 reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings" /v "ProxyEnable" /t REG_DWORD /d 0 /f
 reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings" /v "ProxyServer" /t REG_SZ /d "" /f
 
-:: Enable Windows Hello (if applicable)
-:: Note: Windows Hello requires hardware support and user setup.
-
 :: Configure security options for password policies
 secedit /set /cfg "C:\Windows\Temp\secpol.cfg" /areas SECURITYPOLICY
 secedit /import /cfg "C:\Windows\Temp\secpol.cfg" /areas SECURITYPOLICY
